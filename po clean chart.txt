@@ -1,0 +1,36 @@
+setwd("C:/Users/HP/Documents/Termo")
+po<-read.csv("po_clean.csv")
+library(dplyr)
+names(po)
+names(po)=c("emi","nombre","name","ric","pomean","pomedian","cierre","ytd","upside.mean")
+##nombres en dataframe
+library(reshape)
+library(dplyr)
+##para cambiar nombre a ciertas columnas en un data frame usar rename
+po = rename(po,c(name="raz_soc"))
+View(po)
+##cambiar a numeric
+as.numeric(levels(po$pomean)[po$pomean])
+##cambiar a character
+po$raz_soc<-as.character(levels(po$raz_soc)[po$raz_soc])
+po$emi<-as.character(levels(po$emi)[po$emi])
+po<-po[-10]
+##para filtrar emisoras
+######crear vector target
+target<-c("AC","BACHOCO","BIMBO","CHDRAUI","FEMSA","GRUMA","KOF","LACOMER","LALA","SORIANA","WALMEX")
+######filtrar
+po2<-po %>% filter (emi %in% target) %>% select(emi,upside.mean)
+##library(ggplot2)
+library(ggplot2)
+barplot(d)
+rend_porc<-po2$upside.mean*100
+##agregar el vector
+po2[,3]<-rend_porc
+##cambiar nombre de la columna 3 a "rend_porc"
+names(po2)[3]="Rend.%"
+##cambiar nombre a emisora
+names(po2)[1]="Emisora"
+View(po2)
+##gráfica 
+ggplot(data=po2, aes(x=Emisora, y=rend_porc, fill=Emisora)) +
+  geom_bar(stat="identity")+ labs(x="Emisora",y="Rend. %")
