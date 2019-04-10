@@ -1,0 +1,17 @@
+po<-read.csv("po.csv")
+val<-which(po$PO.mean=="NULL")
+po<-(po[-val,])
+val<-which(po$Upside.mean=="#¡DIV/0!")
+po<-(po[-val,])
+po$Upside.mean<-gsub("%","",po$Upside.mean)
+library(reshape)
+names(po)[1]<-"Emisora"
+po$Upside.mean<-as.numeric(po$Upside.mean)
+po$Emisora<-as.character(po$Emisora)
+target<-c("BBAJIO","BSMX","GENTERA","GFINBUR","GFNORTE","R")
+po2<-po %>% filter(Emisora %in% target) %>% select(Emisora,Upside.mean)
+library(ggplot2)
+ggplot(data=po2, aes(x=reorder(Emisora,-Upside.mean),y=Upside.mean, fill=Upside.mean))+
+         geom_bar(stat="identity",width=0.5)+
+         labs(x="Emisora",y="Rend. %")+
+         geom_text(aes(label=Upside.mean),position=position_dodge(width=0.9),vjust=-0.25)
